@@ -6,3 +6,26 @@
   color: #2c3e50;
   margin-top: 60px;
 }
+
+.movies {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.movie {
+	flex : 1;
+	background-color: rgb(241, 201, 220);
+	border: 1px solid rgb(243, 233, 233);
+	padding: 1em;
+	margin: 0.25em;
+	border-radius: 0.5em;
+}
+
+.add{
+  border: none;
+  background-color: rgb(241, 201, 220);
+}
+
+body {
+  position: relative;
+}
