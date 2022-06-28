@@ -33,15 +33,22 @@ module.exports = function (app, db) {
     app.post('/api/signup', async function (req, res) {
 
         try {
+            const { username, password, nickname } = req.body
+            const checkDup = await db.oneOrNone('select name from users where name = $1', [username])
+            let success
 
-            let message
-            const { username, password } = req.body
-            const checkDup = await db.oneOrNone('select name from users where name = $1', [[username]])
-
-                ((checkDup == null) ? bcrypt.hash(password, saltRounds).then(async function (hash) { await db.none('insert into users (name, password) values ($1,$2)', [username, hash, 0]) }) : message = "User already exists")
+            if (checkDup == null) {
+                bcrypt.hash(password, saltRounds).then(async function (hash) {
+                    await db.none('insert into users (name, password, username) values ($1,$2,$3)', [username, hash, nickname, 0])
+                });
+                success = 'successfully registered'
+            }
+            else {
+                throw new Error("User already exists")
+            }
 
             res.json({
-                message: message
+                message: success
             });
 
         } catch (error) {
@@ -71,7 +78,11 @@ module.exports = function (app, db) {
             }, process.env.ACCESS_TOKEN_SECRET);
 
             res.json({
-                token
+                token,
+                user: {
+                    ...user,
+                    password: null
+                },
 
             });
 
@@ -88,19 +99,81 @@ module.exports = function (app, db) {
 
         const movieName = req.params
 
-    })
-
-    app.post('/api/playlist', verifyToken, async function (req, res) {
-
-        const {username } = req.body
-
-        const userInfo = await db.oneOrNone('select id from users where name = $1', [username])
-        // const movieId = await db.oneOrNone('select movie_id from user_movies where movie_id =$1', [userInfo])
-        const movieId = await db.oneOrNone('insert into user_movies where movie_id = $1', [userInfo])
-        // const allMovies = await db.oneOrNone('select movie_name from user_movies where id = $1', [movieId])
-        
-
+        res.json({
+            data: results
+        })
 
     })
+
+    app.post('/api/playlist:movie', verifyToken, async function (req, res) {
+
+        try {
+            
+            const { userId } = req.body
+            const movie = req.params
+            let error
+    
+            const check = await db.oneOrNone('select movie_name from user_movies where movie_name = $1', [movie.movie])
+    
+            if(check == null){
+                await db.none('insert into user_movies (movie_name, movie_id) values ($1, $2)', [movie.movie, userId])
+                error = "added"
+                alert('added')
+    
+            }else{
+                error = 'this movie has alredy been added to favourites'
+    
+            }
+    
+            res.json({
+                messsage : error.error
+            })
+
+        } catch (error) {
+            res.json({
+                message: error.error
+            })
+            
+        }
+
+
+
+    })
+
+    app.get('/api/favourite/' ,async function (req, res){
+        try {
+            const userId = req.body
+            const favs = []
+            favs = await db.many('select movie_name from user_movies where movie_id = $1', [userId])
+
+            res.json({
+                data: favs
+            })
+            
+        } catch (error) {
+            res.json({
+                message : error.message
+            })
+            
+        }
+    })
+
+    app.delete('/api/playlist/', async function (req, res) {
+
+		try {
+			const { movieName } = req.query;
+			db.many('delete from user_movies where moive_name = $1', [movieName])
+
+			res.json({
+				status: 'success'
+			})
+		} catch (err) {
+			// console.log(err);
+			res.json({
+				status: 'success',
+				error : err.stack
+			})
+		}
+	});
 
 }
