@@ -17,14 +17,22 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgres://kimfr:kf0204@localhost:5432/movie_app'
+// const DATABASE_URL = process.env.DATABASE_URL || 'postgres://kimfr:kf0204@localhost:5432/movie_app'
 const pgp = PgPromise({});
 // const db = pgp(DATABASE_URL);
 
-const db = pgp({connectionString: DATABASE_URL, 
-			max:30,
-		ssl: {rejectUnauthorized : false}
-});
+const DATABASE_URL= process.env.DATABASE_URL || "postgres://kimfr:kf0204@localhost:5432/movie_app";
+const config = {
+    connectionString : DATABASE_URL
+}
+if (process.env.NODE_ENV == 'production') {
+   config.ssl = {
+       rejectUnauthorized : false
+   }
+}
+ 
+const db = pgp(config);
+
 
 const PORT = process.env.PORT || 2020;
 
