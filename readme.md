@@ -2,7 +2,7 @@
 
 The Favourite movie app allows users to search for movies and add it to their favourite playlist.
 
-* Register and Login
+# Register and Login
 The app allows users to register and create an account or if they already have an account, to login to the app.
 
 # Trending
