@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default function MovieApp() {
-    // const URL_BASE =  import.meta.env.VITE_SERVER_URL
+    const URL_BASE =  import.meta.env.VITE_SERVER_URL
     return {
         // info_message: '',
         error: false,
@@ -56,7 +56,7 @@ export default function MovieApp() {
             if (this.username && this.password != '') {
 
                 axios
-                    .post(`http://localhost:2020/api/signup`, { username, password })
+                    .post(`${URL_BASE}/api/signup`, { username, password })
                     .then(r => r.data)
                     .then(
                         r => {
@@ -99,7 +99,7 @@ export default function MovieApp() {
             const { username, password } = this;
             
             axios
-                .post(`http://localhost:2020/api/login`, {
+                .post(`${URL_BASE}/api/login`, {
                     username, password
                 })
                 .then(r => r.data)
@@ -135,7 +135,7 @@ export default function MovieApp() {
                         userId = userLocal.id
 
                     axios
-                        .post('http://localhost:2020/api/favourite', {userId})
+                        .post(`${URL_BASE}/api/favourite`, {userId})
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
@@ -199,7 +199,7 @@ export default function MovieApp() {
             // this.playlist=true
 
             axios
-                .post(`http://localhost:2020/api/playlist/${movieID}`, { userId, token: localStorage.getItem('token') })
+                .post(`${URL_BASE}/api/playlist/${movieID}`, { userId, token: localStorage.getItem('token') })
                 .then(r=>{
                     console.log(r.data.message);
                     this.usermessage = r.data.message
@@ -209,7 +209,7 @@ export default function MovieApp() {
                     }, 3000)
                     
                     axios
-                        .post('http://localhost:2020/api/favourite', {userId})
+                        .post(`${URL_BASE}/api/favourite`, {userId})
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
@@ -231,7 +231,7 @@ export default function MovieApp() {
             // console.log(userId);
 
                     axios
-                        .post('http://localhost:2020/api/favourite', {userId})
+                        .post(`${URL_BASE}/api/favourite`, {userId})
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
@@ -248,14 +248,14 @@ export default function MovieApp() {
             userId = user.id
 
             axios
-                .delete(`http://localhost:2020/api/remove/${movieid}/`)
+                .delete(`${URL_BASE}/api/remove/${movieid}/`)
                 .then(r=>{
                     console.log(r.data.message);
                     this.usermessage = r.data.message
                     this.unauthorised = true
                     
                     axios
-                        .post('http://localhost:2020/api/favourite', {userId})
+                        .post(`${URL_BASE}/api/favourite`, {userId})
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
