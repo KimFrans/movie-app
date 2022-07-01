@@ -37,6 +37,7 @@ export default function MovieApp() {
         welcomeUser:'',
         trending:[],
         trend:true,
+        trendingDisplay:false,
 
         init() {
             // first check token in localstorage 
@@ -59,6 +60,7 @@ export default function MovieApp() {
                 this.favHeading=true
                 this.showFavs()
                 this.trendingMovies()
+                this.trendingDisplay=true
                 
                 // this.playlist = true
             }
@@ -148,6 +150,8 @@ export default function MovieApp() {
                         this.logout=true;
                         this.favHeading=true
                         this.see=true
+                        this.trendingDisplay=true
+                        this.trendingMovies()
                         localStorage.setItem('token', token)
                         localStorage.setItem('user', JSON.stringify(user))
                         console.log(user);
@@ -203,6 +207,7 @@ export default function MovieApp() {
             this.close=false
             this.see=false
             this.trend = false
+            this.trendingDisplay=false
         },
 
         getUser() {
