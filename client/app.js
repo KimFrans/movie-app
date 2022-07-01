@@ -31,6 +31,12 @@ export default function MovieApp() {
         playlist: false,
         favesBtn: false,
         search:false,
+        see:false,
+        close:false,
+        favHeading:false,
+        welcomeUser:'',
+        trending:[],
+        trend:true,
 
         init() {
             // first check token in localstorage 
@@ -44,12 +50,32 @@ export default function MovieApp() {
                 this.login = false;
                 this.logout = true;
                 this.favesBtn = true;
+                this.open = true;
+                // this.playlist = true
+                this.see=false
+                this.close = true
+                this.search = true
+                
+                this.favHeading=true
+                this.showFavs()
+                this.trendingMovies()
                 
                 // this.playlist = true
             }
+            
 
         },
+        expand(){
+            this.playlist=true
+            this.close=true
+            this.see=false
+        },
 
+        collapse(){
+            this.playlist = false
+            this.close = false
+            this.see = true
+        },
 
         register() {
             const { username, password } = this;
@@ -64,6 +90,7 @@ export default function MovieApp() {
                             console.log(r);
                             console.log(r.message);
                             this.usermessage = r.message,
+                            alert(r.message)
                                 this.reg = false,
                                 this.login = true,
                                 console.log(r.message);
@@ -110,26 +137,29 @@ export default function MovieApp() {
 
                     this.usermessage = r.message
                     this.unauthorised=true
+                    // $refs.text.innerHTML = r.message
 
                     if (r.token) {
                         this.open = true;
                         this.login = false;
-                        this.playlist=true;
+                        // this.playlist=true;
                         this.favesBtn = true;
                         this.search=true;
                         this.logout=true;
+                        this.favHeading=true
+                        this.see=true
                         localStorage.setItem('token', token)
                         localStorage.setItem('user', JSON.stringify(user))
                         console.log(user);
 
                         this.token = token;
                         // this.loggedInUser = user;
+                        setTimeout(() => {
+                            this.usermessage = ''
+                        }, 3000)
                     }
                     // console.log(r);
                     // this.logout = true
-                    setTimeout(() => {
-                        this.usermessage = ''
-                    }, 3000)
                         let { userId} = this;
                         const userLocal = this.getUser()
                         userId = userLocal.id
@@ -169,6 +199,10 @@ export default function MovieApp() {
             this.logout = false
             this.favesBtn = false
             this.search = false
+            this.favHeading=false
+            this.close=false
+            this.see=false
+            this.trend = false
         },
 
         getUser() {
@@ -186,6 +220,7 @@ export default function MovieApp() {
                     // console.log(r.data.results.backdrop_path);
                     // console.log(r.data.results.title);
                     this.movies = r.data.results
+                    this.trend = false
                 })
 
         },
@@ -213,6 +248,7 @@ export default function MovieApp() {
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
+                            // this.trend = false
                             // console.log(this.favourites)
 
                         })
@@ -235,6 +271,7 @@ export default function MovieApp() {
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
+                            // this.trend = false
                             // console.log(this.favourites)
 
                         })
@@ -259,6 +296,7 @@ export default function MovieApp() {
                         .then(r=>{
                             console.log(r.data.test);
                             this.favourites = r.data.test
+                            // this.trend = false
                             // console.log(this.favourites)
 
                         })
@@ -266,6 +304,17 @@ export default function MovieApp() {
                     setTimeout(() => {
                         this.usermessage = ''
                     }, 3000)
+                })
+
+        },
+
+
+        trendingMovies(){
+            axios
+                .get('https://api.themoviedb.org/3/trending/all/day?api_key=7feaca8fabb152ec6a6a5540ef986570')
+                .then(r =>{
+                    console.log(r.data.results)
+                    this.trending = r.data.results
                 })
 
         },

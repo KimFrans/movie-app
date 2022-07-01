@@ -116,6 +116,14 @@ module.exports = function (app, db) {
 
     })
 
+    app.get('https://api.themoviedb.org/3/trending/all/day?api_key=7feaca8fabb152ec6a6a5540ef986570', async function (req, res) {
+
+        res.json({
+            data: results
+        })
+
+    })
+
     app.post('/api/playlist/:movie', verifyToken, async function (req, res) {
 
         try {
