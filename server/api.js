@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const axios = require('axios');
+const { json } = require('express');
 
 module.exports = function (app, db) {
 
@@ -33,13 +35,13 @@ module.exports = function (app, db) {
     app.post('/api/signup', async function (req, res) {
 
         try {
-            const { username, password, nickname } = req.body
+            const { username, password } = req.body
             const checkDup = await db.oneOrNone('select name from users where name = $1', [username])
             let success
 
             if (checkDup == null) {
                 bcrypt.hash(password, saltRounds).then(async function (hash) {
-                    await db.none('insert into users (name, password, username) values ($1,$2,$3)', [username, hash, nickname, 0])
+                    await db.none('insert into users (name, password) values ($1,$2)', [username, hash, 0])
                 });
                 success = 'successfully registered'
             }
@@ -69,13 +71,21 @@ module.exports = function (app, db) {
             const user = await db.one('select * from users where name = $1', [username])
             const decrypt = await bcrypt.compare(password, user.password)
 
-            if (!decrypt) {
-                message = "Wrong password or username"
+            if(username == ''){
+                throw new Error("name required")
+            }
+            if(password == ''){
+                throw new Error("password required")
             }
 
+            if (!decrypt) {
+                throw new Error("Wrong password or username")
+            }
+            
             const token = jwt.sign({
                 username
             }, process.env.ACCESS_TOKEN_SECRET);
+
 
             res.json({
                 token,
@@ -83,6 +93,7 @@ module.exports = function (app, db) {
                     ...user,
                     password: null
                 },
+                message
 
             });
 
@@ -97,7 +108,7 @@ module.exports = function (app, db) {
 
     app.get('https://api.themoviedb.org/3/search/movie?api_key=7feaca8fabb152ec6a6a5540ef986570&query:movie_name', async function (req, res) {
 
-        const movieName = req.params
+        // const movieName = req.params
 
         res.json({
             data: results
@@ -105,49 +116,70 @@ module.exports = function (app, db) {
 
     })
 
-    app.post('/api/playlist:movie', verifyToken, async function (req, res) {
+    app.post('/api/playlist/:movie', verifyToken, async function (req, res) {
 
         try {
             
             const { userId } = req.body
             const movie = req.params
-            let error
+            let message
     
-            const check = await db.oneOrNone('select movie_name from user_movies where movie_name = $1', [movie.movie])
+            const check = await db.oneOrNone('select movie_id from user_movies where movie_id = $1', [movie.movie])
     
             if(check == null){
-                await db.none('insert into user_movies (movie_name, movie_id) values ($1, $2)', [movie.movie, userId])
-                error = "added"
-                alert('added')
+                await db.none('insert into user_movies (movie_id, usersId) values ($1, $2)', [movie.movie, userId])
+                message = "added to favourites"
+                console.log('false');
+                // alert('added')
     
             }else{
-                error = 'this movie has alredy been added to favourites'
+                message = 'this movie has alredy been added to favourites'
     
             }
     
             res.json({
-                messsage : error.error
+                message : message
             })
 
         } catch (error) {
             res.json({
-                message: error.error
+                message: error.message
             })
             
         }
 
-
-
     })
 
-    app.get('/api/favourite/' ,async function (req, res){
+
+
+    async function getMovieByID(id){
+
+        const fetch = await
+        axios
+            .get(`https://api.themoviedb.org/3/movie/${id}?api_key=7feaca8fabb152ec6a6a5540ef986570&language=en-US`)
+            .then(result => {
+                return result.data
+                // console.log(result)
+            })
+        return fetch
+        
+    }
+
+    app.post('/api/favourite/' ,async function (req, res){
         try {
-            const userId = req.body
-            const favs = []
-            favs = await db.many('select movie_name from user_movies where movie_id = $1', [userId])
+            const userId = req.body.userId
+            // const favs = []
+            const favs = await db.many('select movie_id from user_movies where usersid = $1', [userId])
+            // console.log(favs);
+
+            const movies = favs.map(async movie  => {
+                return await getMovieByID(movie.movie_id)
+            })
+
+            // console.log(await Promise.all(movies));
 
             res.json({
-                data: favs
+                test: await Promise.all(movies)
             })
             
         } catch (error) {
@@ -156,15 +188,20 @@ module.exports = function (app, db) {
             })
             
         }
-    })
+    });
 
-    app.delete('/api/playlist/', async function (req, res) {
+    app.delete('/api/remove/:movieid', async function (req, res) {
 
 		try {
-			const { movieName } = req.query;
-			db.many('delete from user_movies where moive_name = $1', [movieName])
+			const movieid  = req.params;
+            const getID = await db.oneOrNone('select movie_id from user_movies where movie_id = $1', [movieid.movieid])
+            console.log(getID.movie_id);
+            const del = getID.movie_id
+			db.none('delete from user_movies where movie_id = $1', [del])
+            let removed = "Removed from favourites"
 
 			res.json({
+                message : removed,
 				status: 'success'
 			})
 		} catch (err) {

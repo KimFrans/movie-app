@@ -7,6 +7,22 @@
   margin-top: 60px;
 }
 
+body{
+  box-sizing: border-box;
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
+
+.header{
+  background-color: #cfa2c9;
+}
+
+img{
+  display: inline-block;
+  width: 5 em;
+  /* height: 8em; */
+}
+
 .movies {
 	display: flex;
 	flex-wrap: wrap;
@@ -14,18 +30,46 @@
 
 .movie {
 	flex : 1;
-	background-color: rgb(241, 201, 220);
-	border: 1px solid rgb(243, 233, 233);
-	padding: 1em;
+	background-color: whitesmoke;
+	border: 1px solid rgb(170, 9, 135);
+	/* padding: 0.5em; */
 	margin: 0.25em;
 	border-radius: 0.5em;
+  /* flex-wrap: wrap; */
 }
 
 .add{
   border: none;
-  background-color: rgb(241, 201, 220);
+  font-size: 1.5em;
+  float: left;
+
+}
+
+.del{
+  border: none;
+  font-size: 1.5rem;
+  float: left;
 }
 
 body {
   position: relative;
 }
+
+.usermessage{
+	background-color: whitesmoke;
+	color: green;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+.unauthorised{
+	background-color : whitesmoke;
+	color: red;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+.logout{
+  float: right;
+}
+

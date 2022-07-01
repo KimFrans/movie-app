@@ -9,30 +9,24 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <title>Vite App</title>
   <script type="module" src="/main.js"></script>
-  <script src="https://kit.fontawesome.com/455b1f2011.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <!-- <div id="app"></div> -->
 
-  <div class="container" x-data="MovieApp">
+  <div x-data="MovieApp">
 
-    <div class="sticky-top text-center pt-2">
+    <div class="header text-center pt-2 pb-2">
       <h2>Favourite Movie App</h2>
     </div>
-
-    
 
     <div class="row">
       <form class="d-flex justify-content-center pt-3">
         <div class="form-group">
-          <!-- <label for="username" x-show="login">Username</label> -->
           <input type="text" class="form-control" placeholder="Username" name="username" x-show="login"
             x-model="username">
-          <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
         </div>
         <div class="form-group">
-          <!-- <label for="password" x-show="login">Password</label> -->
           <input type="password" class="form-control" placeholder="Password" name="password" x-show="login"
             x-model="password">
         </div>
@@ -62,44 +56,65 @@
           <input type="password" class="form-control" placeholder="Password" name="password" x-show="reg"
             x-model="password">
         </div>
-        <div class="form-group">
-          <!-- <label for="nickname" x-show="reg">Username</label> -->
+        <!-- <div class="form-group">
           <input type="text" class="form-control" placeholder="Username" x-model="nickname" x-show="reg">
-        </div>
-        <button type="button" x-show="reg" class="btn btn-link" @click="loginScreen">Already have an Account?
-          Login</button>
+        </div> -->
         <button class="login btn btn-outline-success" x-show="reg" @click="register"> Register </button>
-  
       </form>
+    </div>
+    <div class="row">
+      <button type="button" x-show="reg" class="btn btn-link" @click="loginScreen">Already have an Account?
+        Login</button>
 
     </div>
 
-    
+    <button class="logout btn btn-danger" x-show="logout" @click="logoutFunction"> logout </button>
+    <!-- <button class="btn btn-warning" x-show="favesBtn" @click="showFavs">show favs</button> -->
+
     <div class="usermessage" x-bind:class="unauthorised ? 'unauthorised' : ''" x-text="usermessage"></div>
 
-    <div x-show="open">
-      <!-- Dropdown Contents... -->
-      <button class="btn btn-outline-info" x-show="logout" @click="logoutFunction"> logout </button>
-      <button class="btn btn-outline-info" x-show="favesBtn" @click="showFavs">show favs</button>
-
-
-      <div class=" search input-group justify-content-center">
-        <div class="form-outline">
+    <div x-show="search">
+      <div class="search input-group justify-content-center" >
+        <div class="form-outline" >
           <input type="search" id="form1" class="form-control" placeholder="search" x-model="movie_name" />
           <!-- <label class="form-label" for="form1">Search</label> -->
         </div>
         <button class="login btn btn-info" @click="searchMovie"> Search </button>
       </div>
 
+    </div>
+
+
+    <div x-show="playlist">
+      <!-- <button class="btn btn-outline-info" x-show="logout" @click="logoutFunction"> logout </button> -->
+      <h3>Favourites</h3>
+      <p>Remove from playlist by clicking the x</p>
+
+      <div class="movies">
+        <template x-for="favourite in favourites" >
+          <div class="movie">
+            <button class="del btn btn-outline-danger" @click="deleteMovie(favourite.id)"><ion-icon name="close-circle-outline"></ion-icon></button>
+            <span x-text="favourite.title"></span>
+            <img x-bind:src="`https://image.tmdb.org/t/p/w500${favourite.poster_path}`">
+          </div>
+        </template>
+
+      </div>
+
+    </div>
+
+    <div x-show="open">
+    
       <div data-bs-spy="scroll" data-bs-target="search" data-bs-offset="0" class="scrollspy-example" tabindex="0">
-        <p>Add movies to you favourites by clicking on the favourite star!</p>
+        <!-- <p>Add movies to you favourites by clicking on the favourite star!</p> -->
+        <h3>Search results</h3>
 
         <div class="movies">
           <template x-for="movie in movies" >
             <div class="movie">
-              <button class="add" @click="addToFavourite(movie.title)"><ion-icon name="star-outline"></ion-icon></button>
+              <button class="add btn btn-outline-dark" @click="addToFavourite(movie.id)"><ion-icon name="heart-outline"></ion-icon></button>
               <!-- <img x-bind:src="movie.backdrop_path"><br> -->
-              <img src="`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`">
+              <img x-bind:src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`">
               <span x-text="movie.title"></span>
             </div>
           </template>
@@ -108,24 +123,10 @@
         
       </div>
 
-  
 
     </div>
 
-    <div x-show="playlist">
-
-      <div class="faves">
-        <template x-for="favourite in favourites" >
-          <div class="fav">
-            <!-- <span x-text="movie.title"></span> -->
-          </div>
-        </template>
-
-      </div>
-
-
-
-    </div>
+    
 
 
 
