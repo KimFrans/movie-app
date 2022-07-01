@@ -7,10 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <title>Vite App</title>
   
-  <script type="module" crossorigin src="/movie-app/assets/index.2dd0ff23.js"></script>
-  <link rel="stylesheet" href="/movie-app/assets/index.d556af23.css">
+  <script type="module" crossorigin src="/movie-app/assets/index.98b70468.js"></script>
+  <link rel="stylesheet" href="/movie-app/assets/index.a8392314.css">
 </head>
 
 <body>
@@ -21,6 +23,7 @@
     <div class="header text-center pt-2 pb-2">
       <h2>Favourite Movie App</h2>
     </div>
+    <!-- <h3 x-text="welcomeUser"></h3> -->
 
     <div class="row">
       <form class="d-flex justify-content-center pt-3">
@@ -32,9 +35,8 @@
           <input type="password" class="form-control" placeholder="Password" name="password" x-show="login"
             x-model="password">
         </div>
-        <button type="button" class="btn btn-outline-info login" x-show="login" @click="loginFunction"> Login </button>
-        <!-- <button type="button" x-show="login" class="btn btn-link" @click="registerScreen">Dont have an account?
-          Register!</button> -->
+        <button type="button" class="btn btn-warning login" x-show="login" @click="loginFunction"> Login </button>
+
 
       </form>
 
@@ -49,19 +51,13 @@
     <div class="row">
       <form class="d-flex justify-content-center">
         <div class="form-group">
-          <!-- <label for="username" x-show="reg">Name</label> -->
           <input type="text" class="form-control" placeholder="Name" name="username" x-show="reg" x-model="username">
-          <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
         </div>
         <div class="form-group">
-          <!-- <label for="password" x-show="reg">Password</label> -->
           <input type="password" class="form-control" placeholder="Password" name="password" x-show="reg"
             x-model="password">
         </div>
-        <!-- <div class="form-group">
-          <input type="text" class="form-control" placeholder="Username" x-model="nickname" x-show="reg">
-        </div> -->
-        <button class="login btn btn-outline-success" x-show="reg" @click="register"> Register </button>
+        <button class="login btn btn-success" x-show="reg" @click="register"> Register </button>
       </form>
     </div>
     <div class="row">
@@ -70,34 +66,43 @@
 
     </div>
 
+
     <button class="logout btn btn-danger" x-show="logout" @click="logoutFunction"> logout </button>
-    <!-- <button class="btn btn-warning" x-show="favesBtn" @click="showFavs">show favs</button> -->
 
     <div class="usermessage" x-bind:class="unauthorised ? 'unauthorised' : ''" x-text="usermessage"></div>
+    <!-- <div id="snackbar" x-ref="text"></div> -->
 
     <div x-show="search">
-      <div class="search input-group justify-content-center" >
-        <div class="form-outline" >
+      <div class="search input-group justify-content-center">
+        <div class="form-outline">
           <input type="search" id="form1" class="form-control" placeholder="search" x-model="movie_name" />
-          <!-- <label class="form-label" for="form1">Search</label> -->
         </div>
-        <button class="login btn btn-info" @click="searchMovie"> Search </button>
+        <button class="login btn btn-dark" @click="searchMovie"> Search </button>
       </div>
 
     </div>
 
 
+    <span class="favouritesHeading" x-show="favHeading">Favourites </span> <button type="button" class="btn-close"
+      aria-label="Close" x-show="close" @click="collapse"></button> <button type="button" class="open btn "
+      aria-label="Open" x-show="see" @click="expand">
+      <ion-icon name="add-outline"></ion-icon>
+    </button>
     <div x-show="playlist">
-      <!-- <button class="btn btn-outline-info" x-show="logout" @click="logoutFunction"> logout </button> -->
-      <h3>Favourites</h3>
-      <p>Remove from playlist by clicking the x</p>
+      <!-- <p>Remove from playlist by clicking the x</p> -->
 
       <div class="movies">
-        <template x-for="favourite in favourites" >
-          <div class="movie">
-            <button class="del btn btn-outline-danger" @click="deleteMovie(favourite.id)"><ion-icon name="close-circle-outline"></ion-icon></button>
-            <span x-text="favourite.title"></span>
-            <img x-bind:src="`https://image.tmdb.org/t/p/w500${favourite.poster_path}`">
+        <template x-for="favourite in favourites">
+          <div class="card movie_card">
+            <button class="del btn btn-outline-danger" @click="deleteMovie(favourite.id)">
+              <ion-icon name="close-circle-outline"></ion-icon>
+            </button>
+            <img class="card-img-top" x-bind:src="`https://image.tmdb.org/t/p/w500${favourite.poster_path}`" alt="...">
+            <div class="card-body">
+              <!-- <h5 class="card-title" x-text="favourite.title"></h5> -->
+              <h5 class="movie_info" x-text="favourite.title"></h5>
+              <!-- <span class="movie_info" x-text="favourite.release_date"></span> -->
+            </div>
           </div>
         </template>
 
@@ -106,36 +111,59 @@
     </div>
 
     <div x-show="open">
-    
-      <div data-bs-spy="scroll" data-bs-target="search" data-bs-offset="0" class="scrollspy-example" tabindex="0">
-        <!-- <p>Add movies to you favourites by clicking on the favourite star!</p> -->
-        <h3>Search results</h3>
 
-        <div class="movies">
-          <template x-for="movie in movies" >
-            <div class="movie">
-              <button class="add btn btn-outline-dark" @click="addToFavourite(movie.id)"><ion-icon name="heart-outline"></ion-icon></button>
-              <!-- <img x-bind:src="movie.backdrop_path"><br> -->
-              <img x-bind:src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`">
-              <span x-text="movie.title"></span>
+      <h4>Search results</h4>
+
+      <div class="movies">
+        <template x-for="movie in movies">
+          <div class="card movie_card">
+            <span class="card-img-top float-right"><button class="add btn btn-outline-dark"
+                @click="addToFavourite(movie.id)">
+                <ion-icon name="heart-outline"></ion-icon>
+              </button></span>
+            <img class="card-img-top" x-bind:src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="...">
+            <div class="card-body">
+              <!-- <h5 class="card-title" x-text="movie.title"></h5> -->
+              <h5 class="movie_info" x-text="movie.title"></h5>
+              <span class="movie_info" x-text="movie.release_date"></span>
             </div>
-          </template>
-  
-        </div>
-        
+          </div>
+        </template>
+
       </div>
+
+
 
 
     </div>
 
-    
+    <div class="row" x-show="trend">
+      <h3>Trending Movies</h3>
+      <!-- <div class="trending" > -->
+      <!-- <button type="button" @ click="trendingMovies">trends</button> -->
+      <div class="movies">
+        <template x-for="trend in trending">
+          <div class="card movie_card">
+            <img class="card-img-top" x-bind:src="`https://image.tmdb.org/t/p/w500${trend.poster_path}`" alt="...">
+            <div class="card-body">
+              <h5 class="movie_info" x-text="trend.name"></h5>
+              <h5 class="movie_info" x-text="trend.title"></h5>
+              <h3><ion-icon name="fitness-outline"></ion-icon></h3><span class="movie_info" x-text="trend.vote_count"></span>
+            </div>
+          </div>
+        </template>
 
+      </div>
 
+      <!-- </div> -->
+
+    </div>
 
   </div>
 
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-	<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
+
 </html>
