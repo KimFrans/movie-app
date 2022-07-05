@@ -105,6 +105,10 @@ export default function MovieApp() {
                                 // this.unauthorised = false
                             }, 3000);
                         })
+                        setTimeout(() => {
+                            this.usermessage = ''
+                            // this.unauthorised = false
+                        }, 3000);
 
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 this.username = ''
