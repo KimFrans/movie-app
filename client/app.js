@@ -299,7 +299,7 @@ export default function MovieApp() {
                     axios
                         .post(`${URL_BASE}/api/favourite`, {userId})
                         .then(r=>{
-                            console.log(r.data.test);
+                            // console.log(r.data.test);
                             this.favourites = r.data.test
                             // this.trend = false
                             // console.log(this.favourites)
@@ -318,7 +318,7 @@ export default function MovieApp() {
             axios
                 .get('https://api.themoviedb.org/3/trending/all/day?api_key=7feaca8fabb152ec6a6a5540ef986570')
                 .then(r =>{
-                    console.log(r.data.results)
+                    // console.log(r.data.results)
                     this.trending = r.data.results
                 })
 
