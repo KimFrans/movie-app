@@ -6,6 +6,6 @@ node_js:
   - 12
 before_script:
   - psql -c 'create database movie_app;' -U postgres
-  - psql -U postgres -d movie_app -a -f sql/movie_user.sql
+  - psql -U postgres -d movie_app -a -f movie_user.sql
 services:
   - postgresql;
