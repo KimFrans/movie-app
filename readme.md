@@ -1,3 +1,5 @@
+[![Build Status](https://app.travis-ci.com/KimFrans/movie-app.svg?branch=gh-pages)](https://app.travis-ci.com/KimFrans/movie-app)
+
 # Favourite Movie App
 
 The Favourite movie app allows users to search for movies and add it to their favourite playlist.

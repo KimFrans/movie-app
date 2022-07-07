@@ -6,6 +6,13 @@ const { json } = require('express');
 
 module.exports = function (app, db) {
 
+    app.get('/api/test', async function (req, res) {
+		let name = req.body
+		res.json({
+			name: 'joe'
+		});
+	});
+
     function verifyToken(req, res, next) {
 
         const token = req.headers.authorization && req.headers.authorization.split(" ")[1] || req.body.token;
@@ -70,6 +77,7 @@ module.exports = function (app, db) {
             const { username, password } = req.body
             const user = await db.one('select * from users where name = $1', [username])
             const decrypt = await bcrypt.compare(password, user.password)
+
 
             if(username == ''){
                 throw new Error("name required")
@@ -137,11 +145,11 @@ module.exports = function (app, db) {
             if(check == null){
                 await db.none('insert into user_movies (movie_id, usersId) values ($1, $2)', [movie.movie, userId])
                 message = "added to favourites"
-                console.log('false');
+                // console.log('false');
                 // alert('added')
     
             }else{
-                message = 'this movie has alredy been added to favourites'
+                message = 'this movie has already been added to favourites'
     
             }
     
@@ -203,7 +211,7 @@ module.exports = function (app, db) {
 		try {
 			const movieid  = req.params;
             const getID = await db.oneOrNone('select movie_id from user_movies where movie_id = $1', [movieid.movieid])
-            console.log(getID.movie_id);
+            // console.log(getID.movie_id);
             const del = getID.movie_id
 			db.none('delete from user_movies where movie_id = $1', [del])
             let removed = "Removed from favourites"
