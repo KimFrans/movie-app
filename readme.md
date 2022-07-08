@@ -1,4 +1,5 @@
-[![Build Status](https://app.travis-ci.com/KimFrans/movie-app.svg?branch=gh-pages)](https://app.travis-ci.com/KimFrans/movie-app)
+[![Build Status](https://app.travis-ci.com/KimFrans/movie-app.svg?branch=main)](https://app.travis-ci.com/KimFrans/movie-app)
+
 
 # Favourite Movie App
 
